@@ -2,11 +2,11 @@ import axios from "axios";
 import fs from "fs";
 import { getLinkCheerio } from "../../Request";
 import { getProxiesInString } from "../Scraping";
-// import proxy_check from "proxy-check";
+import {writeProxiesToTxt} from "../../Files"
 
 const getProxiesFromLink = async (
   url: string,
-  file: string = "proxies.txt"
+  file: string = "pasteBinProxies.txt"
 ):Promise<string[]> => {
   try {
     let validPastebin = new RegExp(/https:\/\/pastebin\.com\/raw\/[A-z]*/, "g");
@@ -21,8 +21,8 @@ const getProxiesFromLink = async (
     }
     let response = await axios(url);
     let proxies: string[] = getProxiesInString(response.data);
+    // await writeProxiesToTxt(proxies,file)
     return proxies;
-    // await fs.writeFile(file,proxies.join("\n"),(error)=>{console.log(error)})
   } catch (error) {
     console.log(error);
     return []

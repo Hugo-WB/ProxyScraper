@@ -5,18 +5,19 @@ import fs from "fs";
 
 const checkProxy = async (
   url: string,
-  proxy: string
+  proxy: string,
+  timeout:number = 3000
 ): Promise<Response | "TIMEOUT"> => {
   try {
-    let timeout: Promise<"TIMEOUT"> = new Promise((resolve, reject) =>
-      setTimeout(() => reject("TIMEOUT"), 5000)
+    let timeoutPromise: Promise<"TIMEOUT"> = new Promise((resolve, reject) =>
+      setTimeout(() => reject("TIMEOUT"), timeout)
     );
     let response = fetch(url, {
       agent: new HttpProxyAgent("http://" + proxy),
       redirect: "follow",
       follow: 10,
     });
-    return Promise.race([response, timeout]);
+    return Promise.race([response, timeoutPromise]);
   } catch (e) {
     throw "ERROR" + e;
   }
@@ -41,7 +42,7 @@ const checkProxies = async (proxies: string[]): Promise<string[]> => {
       }
     }
   }
-  console.log(validProxies);
+  console.log(((100*validProxies.length)/ proxies.length).toPrecision(3).toString() + "% Valid Proxies")
   return validProxies;
 };
 

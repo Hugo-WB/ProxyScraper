@@ -7,7 +7,7 @@ let sleep = async (ms: number) => {
 };
 
 let getLinkCheerio = async (url: string) => {
-  console.log(url);
+  console.log("REQUESTING: \n"+url);
   try {
     let config: AxiosRequestConfig = {
       method: "get",
@@ -25,9 +25,8 @@ let getLinkCheerio = async (url: string) => {
 
     let response = await axios(config);
     let stringResponse: string = response.data;
-    console.log(stringResponse);
+    // console.log(stringResponse);
     const cheeriod = cheerio.load(stringResponse);
-
     return cheeriod;
   } catch (error) {
     console.log(error);

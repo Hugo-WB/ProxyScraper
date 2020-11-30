@@ -1,7 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import cheerio from "cheerio";
-import randomUseragent from "random-useragent";
-import {getLinkCheerio} from "../Request"
+import {getLinkCheerio} from "../../Request"
 
 let getLinksFromGoogleSearch = async (search: string) => {
   let links: string[] = [];
