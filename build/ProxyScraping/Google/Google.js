@@ -36,34 +36,43 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ProxyChecking_1 = require("./ProxyChecking/ProxyChecking");
-var Files_1 = require("./Files");
-var Scraping_1 = require("./ProxyScraping/Scraping");
-// checkProxiesInFile("proxies.txt")
-var main = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var freeProxies, validProxies;
+exports.getLinksFromGoogleSearch = void 0;
+var Request_1 = require("../../Request");
+var getLinksFromGoogleSearch = function (search) { return __awaiter(void 0, void 0, void 0, function () {
+    var links, morePages, $, aTags;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Scraping_1.getProxiesFromURL("https://www.proxyscan.io/download?type=http")];
+            case 0:
+                links = [];
+                morePages = [];
+                return [4 /*yield*/, getGoogleSearchCheerio(search)];
             case 1:
-                freeProxies = _a.sent();
-                return [4 /*yield*/, ProxyChecking_1.checkProxies(freeProxies)];
-            case 2:
-                validProxies = _a.sent();
-                return [4 /*yield*/, Files_1.writeProxiesToTxt(validProxies, "validProxies.txt")];
-            case 3:
-                _a.sent();
-                return [2 /*return*/];
+                $ = _a.sent();
+                aTags = $(".yuRUbf").children("a");
+                aTags.map(function (i, e) {
+                    var href = $(e).attr("href");
+                    if (href != undefined) {
+                        links.push(href);
+                    }
+                });
+                return [2 /*return*/, links];
         }
     });
 }); };
-// getProxiesFromLink("https://pastebin.com/qFsBiFbt").then((proxies)=>{
-//   checkProxies(proxies).then((output)=>{
-//     console.log(output)
-//   })
-// })
-// getLinksFromGoogleSearch("site:pastebin.com proxy list").then((a)=>console.log(a))
-// getLinksFromGoogleSearch("howtoeatapotato").then((a)=>console.log(a))
-// let test = new RegExp(/\s/,"g")
-// console.log("waguan my slimes".replace(test,"+"))
-main();
+exports.getLinksFromGoogleSearch = getLinksFromGoogleSearch;
+var getGoogleSearchCheerio = function (search, page) {
+    if (page === void 0) { page = 1; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var reg;
+        return __generator(this, function (_a) {
+            reg = new RegExp(/\s/, "g");
+            return [2 /*return*/, Request_1.getLinkCheerio("https://www.google.com/search?q=" + search.replace(reg, "+") + "&start=" + ((page - 1) * 10).toString())];
+        });
+    });
+};
+var Google = /** @class */ (function () {
+    function Google() {
+    }
+    return Google;
+}());
+exports.default = Google;

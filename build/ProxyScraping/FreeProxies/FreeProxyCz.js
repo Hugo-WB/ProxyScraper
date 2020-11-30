@@ -35,51 +35,67 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProxiesFromLink = void 0;
-var axios_1 = __importDefault(require("axios"));
-// import proxy_check from "proxy-check";
-var getProxiesFromLink = function (url, file) {
-    if (file === void 0) { file = "proxies.txt"; }
+exports.FreeProxyCz = void 0;
+var Request_1 = require("../../Request");
+var FreeProxyCzUrl = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+    var $_1, rows, proxies_1, Base64Regex_1, EncodedRegex_1, JSCommands, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Request_1.getLinkCheerio(url)];
+            case 1:
+                $_1 = _a.sent();
+                rows = $_1("#proxy_list").children("tbody").children("tr");
+                proxies_1 = [];
+                Base64Regex_1 = RegExp(/Base64\.decode\(".*?\"\)/);
+                EncodedRegex_1 = RegExp(/".*"/);
+                JSCommands = $_1.html().match(Base64Regex_1);
+                rows.each(function (i, e) {
+                    var _a, _b;
+                    var JSCommand = (_a = $_1(e).html()) === null || _a === void 0 ? void 0 : _a.match(Base64Regex_1);
+                    if (JSCommand == null && JSCommand == undefined) {
+                        return;
+                    }
+                    var encoded = (_b = JSCommand[0]
+                        .match(EncodedRegex_1)) === null || _b === void 0 ? void 0 : _b.toString().replace(new RegExp(/"/, "g"), "");
+                    if (encoded == undefined) {
+                        return;
+                    }
+                    var ip = Buffer.from(encoded, "base64").toString();
+                    var port = $_1(e).find(".fport").text();
+                    proxies_1.push(ip + ":" + port);
+                });
+                return [2 /*return*/, proxies_1];
+            case 2:
+                error_1 = _a.sent();
+                console.log(error_1);
+                return [2 /*return*/, []];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var FreeProxyCz = function (proxyProtocol) {
+    if (proxyProtocol === void 0) { proxyProtocol = "http"; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var validPastebin, validInput, splitUrl, re, response, proxies, error_1;
+        var url, proxyPromises, i, resolvedPromises;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    validPastebin = new RegExp(/https:\/\/pastebin\.com\/raw\/[A-z]*/, "g");
-                    validInput = new RegExp(/https:\/\/pastebin\.com\/.*/, "g");
-                    if (!validInput.test(url)) {
-                        throw new Error("Not A pastebin link");
+                    url = "http://free-proxy.cz/en/proxylist/country/all/" +
+                        proxyProtocol +
+                        "/ping/all";
+                    proxyPromises = [];
+                    for (i = 1; i < 6; i++) {
+                        proxyPromises.push(FreeProxyCzUrl(url + "/" + i.toString()));
                     }
-                    if (!validPastebin.test(url)) {
-                        splitUrl = url.split("/");
-                        splitUrl.splice(splitUrl.length - 1, 0, "raw");
-                        url = splitUrl.join("/");
-                    }
-                    re = new RegExp(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b:\d{2,5}/, "g");
-                    return [4 /*yield*/, axios_1.default(url)];
+                    return [4 /*yield*/, Promise.all(proxyPromises)];
                 case 1:
-                    response = _a.sent();
-                    proxies = response.data.match(re);
-                    return [2 /*return*/, proxies
-                        // await fs.writeFile(file,proxies.join("\n"),(error)=>{console.log(error)})
-                    ];
-                case 2:
-                    error_1 = _a.sent();
-                    console.log(error_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    resolvedPromises = _a.sent();
+                    return [2 /*return*/, resolvedPromises.flat()];
             }
         });
     });
 };
-exports.getProxiesFromLink = getProxiesFromLink;
-var Pastebin = /** @class */ (function () {
-    function Pastebin() {
-    }
-    return Pastebin;
-}());
+exports.FreeProxyCz = FreeProxyCz;

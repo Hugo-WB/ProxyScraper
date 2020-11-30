@@ -39,44 +39,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkProxies = void 0;
+exports.getProxiesFromLink = void 0;
 var axios_1 = __importDefault(require("axios"));
-var checkProxies = function (proxies) { return __awaiter(void 0, void 0, void 0, function () {
-    var proxyPromises, i, proxy, _a, host, port, config, resolvedPromises, validProxies;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                proxyPromises = [];
-                for (i = 0; i < 100; i++) {
-                    proxy = proxies[i];
-                    _a = proxy.split(":"), host = _a[0], port = _a[1];
-                    config = {
-                        method: "get",
-                        url: "https://pastebin.com/raw/d3C8wzJr",
-                        timeout: 10000,
-                        headers: {
-                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36",
-                        },
-                        proxy: {
-                            host: host,
-                            port: Number(port),
-                        },
-                    };
-                    proxyPromises.push(axios_1.default(config));
-                }
-                console.log("Sent requests, awaiting");
-                return [4 /*yield*/, Promise.allSettled(proxyPromises)];
-            case 1:
-                resolvedPromises = _b.sent();
-                validProxies = [];
-                resolvedPromises.forEach(function (promise) {
-                    if (promise.status == "fulfilled") {
-                        validProxies.push(promise.value.config.proxy);
+var Scraping_1 = require("../Scraping");
+var getProxiesFromLink = function (url, file) {
+    if (file === void 0) { file = "pasteBinProxies.txt"; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var validPastebin, validInput, splitUrl, response, proxies, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    validPastebin = new RegExp(/https:\/\/pastebin\.com\/raw\/[A-z]*/, "g");
+                    validInput = new RegExp(/https:\/\/pastebin\.com\/.*/, "g");
+                    if (!validInput.test(url)) {
+                        throw new Error("Not A pastebin link");
                     }
-                });
-                console.log(validProxies);
-                return [2 /*return*/, validProxies];
-        }
+                    if (!validPastebin.test(url)) {
+                        splitUrl = url.split("/");
+                        splitUrl.splice(splitUrl.length - 1, 0, "raw");
+                        url = splitUrl.join("/");
+                    }
+                    return [4 /*yield*/, axios_1.default(url)];
+                case 1:
+                    response = _a.sent();
+                    proxies = Scraping_1.getProxiesInString(response.data);
+                    // await writeProxiesToTxt(proxies,file)
+                    return [2 /*return*/, proxies];
+                case 2:
+                    error_1 = _a.sent();
+                    console.log(error_1);
+                    return [2 /*return*/, []];
+                case 3: return [2 /*return*/];
+            }
+        });
     });
-}); };
-exports.checkProxies = checkProxies;
+};
+exports.getProxiesFromLink = getProxiesFromLink;
+var Pastebin = /** @class */ (function () {
+    function Pastebin() {
+    }
+    return Pastebin;
+}());

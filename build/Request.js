@@ -53,7 +53,7 @@ var getLinkCheerio = function (url) { return __awaiter(void 0, void 0, void 0, f
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log(url);
+                console.log("REQUESTING: \n" + url);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
@@ -75,7 +75,6 @@ var getLinkCheerio = function (url) { return __awaiter(void 0, void 0, void 0, f
             case 3:
                 response = _a.sent();
                 stringResponse = response.data;
-                console.log(stringResponse);
                 cheeriod = cheerio_1.default.load(stringResponse);
                 return [2 /*return*/, cheeriod];
             case 4:

@@ -36,43 +36,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLinksFromGoogleSearch = void 0;
+exports.getProxiesFromURL = exports.getProxiesInString = void 0;
 var Request_1 = require("../Request");
-var getLinksFromGoogleSearch = function (search) { return __awaiter(void 0, void 0, void 0, function () {
-    var links, morePages, $, aTags;
+var getProxiesInString = function (input) {
+    var re = new RegExp(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b:\d{2,5}/, "g");
+    var proxies = input.match(re);
+    console.log(proxies);
+    if (proxies == null) {
+        proxies = [];
+    }
+    return proxies;
+};
+exports.getProxiesInString = getProxiesInString;
+var getProxiesFromURL = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                links = [];
-                morePages = [];
-                return [4 /*yield*/, getGoogleSearchCheerio(search)];
-            case 1:
-                $ = _a.sent();
-                aTags = $(".yuRUbf").children("a");
-                aTags.map(function (i, e) {
-                    var href = $(e).attr("href");
-                    if (href != undefined) {
-                        links.push(href);
-                    }
-                });
-                return [2 /*return*/, links];
+            case 0: return [4 /*yield*/, Request_1.getLinkCheerio(url)];
+            case 1: return [4 /*yield*/, (_a.sent()).html()];
+            case 2:
+                response = _a.sent();
+                return [2 /*return*/, getProxiesInString(response)];
         }
     });
 }); };
-exports.getLinksFromGoogleSearch = getLinksFromGoogleSearch;
-var getGoogleSearchCheerio = function (search, page) {
-    if (page === void 0) { page = 1; }
-    return __awaiter(void 0, void 0, void 0, function () {
-        var reg;
-        return __generator(this, function (_a) {
-            reg = new RegExp(/\s/, "g");
-            return [2 /*return*/, Request_1.getLinkCheerio("https://www.google.com/search?q=" + search.replace(reg, "+") + "&start=" + ((page - 1) * 10).toString())];
-        });
-    });
-};
-var Google = /** @class */ (function () {
-    function Google() {
-    }
-    return Google;
-}());
-exports.default = Google;
+exports.getProxiesFromURL = getProxiesFromURL;

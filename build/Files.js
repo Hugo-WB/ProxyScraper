@@ -35,35 +35,50 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var ProxyChecking_1 = require("./ProxyChecking/ProxyChecking");
-var Files_1 = require("./Files");
-var Scraping_1 = require("./ProxyScraping/Scraping");
-// checkProxiesInFile("proxies.txt")
-var main = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var freeProxies, validProxies;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, Scraping_1.getProxiesFromURL("https://www.proxyscan.io/download?type=http")];
-            case 1:
-                freeProxies = _a.sent();
-                return [4 /*yield*/, ProxyChecking_1.checkProxies(freeProxies)];
-            case 2:
-                validProxies = _a.sent();
-                return [4 /*yield*/, Files_1.writeProxiesToTxt(validProxies, "validProxies.txt")];
-            case 3:
-                _a.sent();
-                return [2 /*return*/];
-        }
+exports.writeProxiesToTxt = void 0;
+var fs_1 = __importDefault(require("fs"));
+var writeProxiesToTxt = function (proxies, destination) {
+    if (destination === void 0) { destination = "proxies.txt"; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fs_1.default.writeFile(destination, proxies.join("\n"), function (error) {
+                        if (error != null) {
+                            console.log("WRITING PROXIES TO TXT ERROR:\n" + error);
+                        }
+                        else {
+                            console.log("Written to txt:" + destination);
+                        }
+                    })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
     });
-}); };
-// getProxiesFromLink("https://pastebin.com/qFsBiFbt").then((proxies)=>{
-//   checkProxies(proxies).then((output)=>{
-//     console.log(output)
-//   })
-// })
-// getLinksFromGoogleSearch("site:pastebin.com proxy list").then((a)=>console.log(a))
-// getLinksFromGoogleSearch("howtoeatapotato").then((a)=>console.log(a))
-// let test = new RegExp(/\s/,"g")
-// console.log("waguan my slimes".replace(test,"+"))
-main();
+};
+exports.writeProxiesToTxt = writeProxiesToTxt;
+var appendProxiesToTxt = function (proxies, destination) {
+    if (destination === void 0) { destination = "proxiest.txt"; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fs_1.default.appendFile(destination, proxies.join("\n"), function (error) {
+                        if (error != null) {
+                            console.log("APPENDING PROXIES TO TXT ERROR:\n" + error);
+                        }
+                        else {
+                            console.log("Appended to txt:" + destination);
+                        }
+                    })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+};
