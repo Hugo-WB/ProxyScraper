@@ -1,0 +1,31 @@
+{
+  "name": "ProxyScraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build:live",
+    "build": "tsc -p .",
+    "build:live": "nodemon --ext ts --watch src --exec ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "@types/cheerio": "^0.22.22",
+    "@types/node-fetch": "^2.5.7",
+    "@types/random-useragent": "^0.3.0",
+    "axios": "^0.21.0",
+    "check-proxy": "^0.3.3",
+    "cheerio": "^1.0.0-rc.3",
+    "http-proxy-agent": "^4.0.1",
+    "node-fetch": "^2.6.1",
+    "random-useragent": "^0.5.0"
+  }
+}
