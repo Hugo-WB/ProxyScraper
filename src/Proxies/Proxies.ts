@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+
 const checkProxies = async (proxies: string[]) => {
   let proxyPromises: Promise<any>[] = [];
   for (let i = 0; i < 100; i++) {
