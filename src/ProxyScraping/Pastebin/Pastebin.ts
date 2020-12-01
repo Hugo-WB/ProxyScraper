@@ -1,7 +1,8 @@
 import fs from "fs";
-import { getLinkCheerio } from "../../Request";
+import { getLinkCheerio, getLinkRaw } from "../../Request";
 import { getProxiesInString } from "../Scraping";
 import {writeProxiesToTxt} from "../../Files"
+import fetch from "node-fetch"
 
 const getProxiesFromPastebinLink = async (
   url: string,
@@ -18,7 +19,7 @@ const getProxiesFromPastebinLink = async (
       splitUrl.splice(splitUrl.length - 1, 0, "raw");
       url = splitUrl.join("/");
     }
-    let response = await (await fetch(url)).text()
+    let response = await getLinkRaw(url)
     let proxies: string[] = getProxiesInString(response);
     // await writeProxiesToTxt(proxies,file)
     return proxies;
