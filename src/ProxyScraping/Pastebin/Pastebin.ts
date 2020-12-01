@@ -1,10 +1,9 @@
-import axios from "axios";
 import fs from "fs";
 import { getLinkCheerio } from "../../Request";
 import { getProxiesInString } from "../Scraping";
 import {writeProxiesToTxt} from "../../Files"
 
-const getProxiesFromLink = async (
+const getProxiesFromPastebinLink = async (
   url: string,
   file: string = "pasteBinProxies.txt"
 ):Promise<string[]> => {
@@ -19,8 +18,8 @@ const getProxiesFromLink = async (
       splitUrl.splice(splitUrl.length - 1, 0, "raw");
       url = splitUrl.join("/");
     }
-    let response = await axios(url);
-    let proxies: string[] = getProxiesInString(response.data);
+    let response = await (await fetch(url)).text()
+    let proxies: string[] = getProxiesInString(response);
     // await writeProxiesToTxt(proxies,file)
     return proxies;
   } catch (error) {
@@ -31,4 +30,4 @@ const getProxiesFromLink = async (
 
 class Pastebin {}
 
-export { getProxiesFromLink };
+export { getProxiesFromPastebinLink};

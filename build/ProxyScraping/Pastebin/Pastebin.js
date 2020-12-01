@@ -35,21 +35,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProxiesFromLink = void 0;
-var axios_1 = __importDefault(require("axios"));
+exports.getProxiesFromPastebinLink = void 0;
 var Scraping_1 = require("../Scraping");
-var getProxiesFromLink = function (url, file) {
+var getProxiesFromPastebinLink = function (url, file) {
     if (file === void 0) { file = "pasteBinProxies.txt"; }
     return __awaiter(void 0, void 0, void 0, function () {
         var validPastebin, validInput, splitUrl, response, proxies, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    _a.trys.push([0, 3, , 4]);
                     validPastebin = new RegExp(/https:\/\/pastebin\.com\/raw\/[A-z]*/, "g");
                     validInput = new RegExp(/https:\/\/pastebin\.com\/.*/, "g");
                     if (!validInput.test(url)) {
@@ -60,22 +56,23 @@ var getProxiesFromLink = function (url, file) {
                         splitUrl.splice(splitUrl.length - 1, 0, "raw");
                         url = splitUrl.join("/");
                     }
-                    return [4 /*yield*/, axios_1.default(url)];
-                case 1:
+                    return [4 /*yield*/, fetch(url)];
+                case 1: return [4 /*yield*/, (_a.sent()).text()];
+                case 2:
                     response = _a.sent();
-                    proxies = Scraping_1.getProxiesInString(response.data);
+                    proxies = Scraping_1.getProxiesInString(response);
                     // await writeProxiesToTxt(proxies,file)
                     return [2 /*return*/, proxies];
-                case 2:
+                case 3:
                     error_1 = _a.sent();
                     console.log(error_1);
                     return [2 /*return*/, []];
-                case 3: return [2 /*return*/];
+                case 4: return [2 /*return*/];
             }
         });
     });
 };
-exports.getProxiesFromLink = getProxiesFromLink;
+exports.getProxiesFromPastebinLink = getProxiesFromPastebinLink;
 var Pastebin = /** @class */ (function () {
     function Pastebin() {
     }

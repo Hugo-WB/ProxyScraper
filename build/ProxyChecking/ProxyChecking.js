@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -59,24 +40,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkProxiesInFile = exports.checkProxy = exports.checkProxies = void 0;
-var http_proxy_agent_1 = require("http-proxy-agent");
-var node_fetch_1 = __importStar(require("node-fetch"));
+var node_fetch_1 = require("node-fetch");
 var fs_1 = __importDefault(require("fs"));
+require("");
+var Request_1 = require("../Request");
 var checkProxy = function (url, proxy, timeout) {
     if (timeout === void 0) { timeout = 3000; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var timeoutPromise, response;
+        var timeoutPromise, validResponse;
         return __generator(this, function (_a) {
             try {
                 timeoutPromise = new Promise(function (resolve, reject) {
                     return setTimeout(function () { return reject("TIMEOUT"); }, timeout);
                 });
-                response = node_fetch_1.default(url, {
-                    agent: new http_proxy_agent_1.HttpProxyAgent("http://" + proxy),
-                    redirect: "follow",
-                    follow: 10,
-                });
-                return [2 /*return*/, Promise.race([response, timeoutPromise])];
+                validResponse = Request_1.getLinkResponse(url);
+                // let validResponse: Promise<Response> = new Promise((resolve, reject) => {
+                //   fetch(url, {
+                //     agent: new HttpProxyAgent("http://" + proxy),
+                //     redirect: "follow",
+                //     follow: 50,
+                //   }).then((re) => {
+                //     re.text().then((text) => {
+                //       if (text.includes("Tired of being tracked online? We can help.")) {
+                //         resolve(re);
+                //       }
+                //     });
+                //   }).catch((e)=>console.log(e));
+                // });
+                return [2 /*return*/, Promise.race([validResponse, timeoutPromise])];
             }
             catch (e) {
                 throw "ERROR" + e;
@@ -110,7 +101,8 @@ var checkProxies = function (proxies) { return __awaiter(void 0, void 0, void 0,
                         }
                     }
                 }
-                console.log(((100 * validProxies.length) / proxies.length).toPrecision(3).toString() + "% Valid Proxies");
+                console.log(((100 * validProxies.length) / proxies.length).toPrecision(3).toString() +
+                    "% Valid Proxies");
                 return [2 /*return*/, validProxies];
         }
     });

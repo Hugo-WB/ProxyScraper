@@ -39,7 +39,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ProxyChecking_1 = require("./ProxyChecking/ProxyChecking");
 var Files_1 = require("./Files");
 var Scraping_1 = require("./ProxyScraping/Scraping");
-// checkProxiesInFile("proxies.txt")
 var main = function () { return __awaiter(void 0, void 0, void 0, function () {
     var freeProxies, validProxies;
     return __generator(this, function (_a) {
@@ -50,20 +49,17 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [4 /*yield*/, ProxyChecking_1.checkProxies(freeProxies)];
             case 2:
                 validProxies = _a.sent();
-                return [4 /*yield*/, Files_1.writeProxiesToTxt(validProxies, "validProxies.txt")];
+                return [4 /*yield*/, Files_1.writeProxiesToTxt(validProxies, "validProxies.txt")
+                    // getProxiesFromGoogleSearch("site:pastebin.com proxy list").then((proxies) => {
+                    //   console.log("PROXIES"+proxies.length.toString())
+                    //   console.log(proxies);
+                    // });
+                    // getLinkCheerio("https://duckduckgo.com").then(cheerio=>{console.log(cheerio.html())})
+                ];
             case 3:
                 _a.sent();
                 return [2 /*return*/];
         }
     });
 }); };
-// getProxiesFromLink("https://pastebin.com/qFsBiFbt").then((proxies)=>{
-//   checkProxies(proxies).then((output)=>{
-//     console.log(output)
-//   })
-// })
-// getLinksFromGoogleSearch("site:pastebin.com proxy list").then((a)=>console.log(a))
-// getLinksFromGoogleSearch("howtoeatapotato").then((a)=>console.log(a))
-// let test = new RegExp(/\s/,"g")
-// console.log("waguan my slimes".replace(test,"+"))
 main();

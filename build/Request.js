@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,50 +58,89 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLinkCheerio = void 0;
-var axios_1 = __importDefault(require("axios"));
+exports.getLinkResponse = exports.getLinkRaw = exports.getLinkCheerio = void 0;
 var random_useragent_1 = __importDefault(require("random-useragent"));
 var cheerio_1 = __importDefault(require("cheerio"));
+var node_fetch_1 = __importStar(require("node-fetch"));
+var http_proxy_agent_1 = require("http-proxy-agent");
 var sleep = function (ms) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, new Promise(function (resolve) { return setTimeout(resolve, ms); })];
     });
 }); };
-var getLinkCheerio = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var config, response, stringResponse, cheeriod, error_1;
+var getLinkCheerio = function (url, proxy) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, cheeriod;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, getLinkRaw(url, proxy)];
+            case 1:
+                response = _a.sent();
+                cheeriod = cheerio_1.default.load(response);
+                return [2 /*return*/, cheeriod];
+        }
+    });
+}); };
+exports.getLinkCheerio = getLinkCheerio;
+var getLinkRaw = function (url, proxy) { return __awaiter(void 0, void 0, void 0, function () {
+    var stringResponse;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, getLinkResponse(url, proxy)];
+            case 1: return [4 /*yield*/, (_a.sent()).text()];
+            case 2:
+                stringResponse = _a.sent();
+                return [2 /*return*/, stringResponse];
+        }
+    });
+}); };
+exports.getLinkRaw = getLinkRaw;
+var getLinkResponse = function (url, proxy) { return __awaiter(void 0, void 0, void 0, function () {
+    var userAgent, myHeaders, options, response, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 console.log("REQUESTING: \n" + url);
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
-                config = {
-                    method: "get",
-                    url: url,
-                    headers: {
-                        DNT: "1",
-                        "Upgrade-Insecure-Requests": "1",
-                        "User-Agent": random_useragent_1.default.getRandom(function (ua) {
-                            return ua.browserName === "Firefox";
-                        }),
-                    },
+                _a.trys.push([1, 3, , 4]);
+                userAgent = random_useragent_1.default.getRandom(function (ua) {
+                    return ua.browserName === "Chrome";
+                });
+                if (userAgent == null) {
+                    userAgent =
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
+                }
+                myHeaders = {
+                    "User-Agent": userAgent,
                 };
-                return [4 /*yield*/, sleep(500)];
+                options = {};
+                if (proxy == undefined) {
+                    options = {
+                        method: "GET",
+                        headers: myHeaders,
+                        redirect: "follow",
+                        follow: 100,
+                        agent: new http_proxy_agent_1.HttpProxyAgent("http://" + "172.67.181.36:80"),
+                    };
+                }
+                else {
+                    options = {
+                        method: "GET",
+                        headers: myHeaders,
+                        redirect: "follow",
+                        follow: 100,
+                    };
+                }
+                return [4 /*yield*/, node_fetch_1.default(url, options)];
             case 2:
-                _a.sent();
-                return [4 /*yield*/, axios_1.default(config)];
-            case 3:
                 response = _a.sent();
-                stringResponse = response.data;
-                cheeriod = cheerio_1.default.load(stringResponse);
-                return [2 /*return*/, cheeriod];
-            case 4:
+                return [2 /*return*/, response];
+            case 3:
                 error_1 = _a.sent();
                 console.log(error_1);
-                return [2 /*return*/, cheerio_1.default.load("<html></html>")];
-            case 5: return [2 /*return*/];
+                return [2 /*return*/, new node_fetch_1.Response("<html></html>")];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.getLinkCheerio = getLinkCheerio;
+exports.getLinkResponse = getLinkResponse;

@@ -1,23 +1,32 @@
-import axios, { AxiosRequestConfig } from "axios";
 import { HttpProxyAgent } from "http-proxy-agent";
 import fetch, { Response } from "node-fetch";
 import fs from "fs";
+import { getLinkResponse } from "../Request";
 
 const checkProxy = async (
   url: string,
   proxy: string,
-  timeout:number = 3000
+  timeout: number = 3000
 ): Promise<Response | "TIMEOUT"> => {
   try {
     let timeoutPromise: Promise<"TIMEOUT"> = new Promise((resolve, reject) =>
       setTimeout(() => reject("TIMEOUT"), timeout)
     );
-    let response = fetch(url, {
-      agent: new HttpProxyAgent("http://" + proxy),
-      redirect: "follow",
-      follow: 10,
-    });
-    return Promise.race([response, timeoutPromise]);
+    let validResponse: Promise<Response> = getLinkResponse(url,undefined,false)
+    // let validResponse: Promise<Response> = new Promise((resolve, reject) => {
+    //   fetch(url, {
+    //     agent: new HttpProxyAgent("http://" + proxy),
+    //     redirect: "follow",
+    //     follow: 50,
+    //   }).then((re) => {
+    //     re.text().then((text) => {
+    //       if (text.includes("Tired of being tracked online? We can help.")) {
+    //         resolve(re);
+    //       }
+    //     });
+    //   }).catch((e)=>console.log(e));
+    // });
+    return Promise.race([validResponse, timeoutPromise]);
   } catch (e) {
     throw "ERROR" + e;
   }
@@ -38,11 +47,15 @@ const checkProxies = async (proxies: string[]): Promise<string[]> => {
     let proxy = proxies[i];
     if (promise.status == "fulfilled") {
       if (promise.value instanceof Response) {
-        validProxies.push(proxy)
+        // promise.value.text().then(text=>console.log(text))
+        validProxies.push(proxy);
       }
     }
   }
-  console.log(((100*validProxies.length)/ proxies.length).toPrecision(3).toString() + "% Valid Proxies")
+  console.log(
+    ((100 * validProxies.length) / proxies.length).toPrecision(3).toString() +
+      "% Valid Proxies"
+  );
   return validProxies;
 };
 

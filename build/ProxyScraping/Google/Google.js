@@ -36,29 +36,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLinksFromGoogleSearch = void 0;
+exports.getProxiesFromGoogleSearch = exports.getLinksFromGoogleSearch = void 0;
 var Request_1 = require("../../Request");
-var getLinksFromGoogleSearch = function (search) { return __awaiter(void 0, void 0, void 0, function () {
-    var links, morePages, $, aTags;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                links = [];
-                morePages = [];
-                return [4 /*yield*/, getGoogleSearchCheerio(search)];
-            case 1:
-                $ = _a.sent();
-                aTags = $(".yuRUbf").children("a");
-                aTags.map(function (i, e) {
-                    var href = $(e).attr("href");
-                    if (href != undefined) {
-                        links.push(href);
-                    }
-                });
-                return [2 /*return*/, links];
-        }
+var Scraping_1 = require("../Scraping");
+var getLinksFromGoogleSearch = function (search, page) {
+    if (page === void 0) { page = 1; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var links, morePages, $, aTags;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    links = [];
+                    morePages = [];
+                    return [4 /*yield*/, getGoogleSearchCheerio(search, page)];
+                case 1:
+                    $ = _a.sent();
+                    aTags = $(".yuRUbf").children("a");
+                    aTags.map(function (i, e) {
+                        var href = $(e).attr("href");
+                        if (href != undefined) {
+                            links.push(href);
+                        }
+                    });
+                    return [2 /*return*/, links];
+            }
+        });
     });
-}); };
+};
 exports.getLinksFromGoogleSearch = getLinksFromGoogleSearch;
 var getGoogleSearchCheerio = function (search, page) {
     if (page === void 0) { page = 1; }
@@ -70,6 +74,46 @@ var getGoogleSearchCheerio = function (search, page) {
         });
     });
 };
+var getProxiesFromGoogleSearch = function (search) { return __awaiter(void 0, void 0, void 0, function () {
+    var proxies, googleLinksPromises, i, googlePagesLinks, linkProxiesPromises, linkProxies;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                proxies = [];
+                googleLinksPromises = [];
+                for (i = 1; i < 3; i++) {
+                    googleLinksPromises.push(getLinksFromGoogleSearch(search, i));
+                }
+                return [4 /*yield*/, Promise.allSettled(googleLinksPromises)
+                    // Array of promises that contain all proxies on a google search link
+                ];
+            case 1:
+                googlePagesLinks = _a.sent();
+                linkProxiesPromises = [];
+                googlePagesLinks.forEach(function (googleLinks) {
+                    if (googleLinks.status == "fulfilled") {
+                        googleLinks.value.forEach(function (link) {
+                            linkProxiesPromises.push(Scraping_1.getProxiesFromURL(link));
+                        });
+                    }
+                });
+                return [4 /*yield*/, Promise.allSettled(linkProxiesPromises)];
+            case 2:
+                linkProxies = _a.sent();
+                linkProxies.forEach(function (linkProxy) {
+                    if (linkProxy.status == "fulfilled") {
+                        console.log("INK PROXY");
+                        console.log(linkProxy.value);
+                        proxies.concat(linkProxy.value);
+                    }
+                });
+                console.log("PROXIES 0");
+                console.log(proxies);
+                return [2 /*return*/, proxies];
+        }
+    });
+}); };
+exports.getProxiesFromGoogleSearch = getProxiesFromGoogleSearch;
 var Google = /** @class */ (function () {
     function Google() {
     }
