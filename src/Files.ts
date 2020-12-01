@@ -25,4 +25,17 @@ const appendProxiesToTxt = async (
   });
 };
 
-export { writeProxiesToTxt };
+let proxies:string[] = []
+
+const getRandomProxyFromTxt = (file:string= "validProxies.txt"):string =>{
+  if (proxies.length<1){
+    let fsFile = fs.readFileSync(file,{encoding:"utf-8"})
+    proxies = fsFile.split("\n")
+    return getRandomProxyFromTxt()
+  }else{
+    let proxy = proxies[Math.floor(Math.random()*proxies.length)]
+    return proxy
+  }
+}
+
+export { writeProxiesToTxt,getRandomProxyFromTxt };

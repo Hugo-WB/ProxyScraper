@@ -2,6 +2,7 @@ import randomUseragent from "random-useragent";
 import cheerio from "cheerio";
 import fetch, { RequestInit, Response } from "node-fetch";
 import { HttpProxyAgent } from "http-proxy-agent";
+import { getRandomProxyFromTxt } from "./Files";
 
 let sleep = async (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -15,8 +16,14 @@ let getLinkCheerio = async (
   return cheeriod;
 };
 
-let getLinkRaw = async (url: string, proxy?: string): Promise<string> => {
-  let stringResponse: string = await (await getLinkResponse(url, proxy)).text();
+let getLinkRaw = async (
+  url: string,
+  proxy?: string,
+  log: boolean = false
+): Promise<string> => {
+  let stringResponse: string = await (
+    await getLinkResponse(url, proxy, log)
+  ).text();
   return stringResponse;
 };
 
@@ -37,13 +44,21 @@ let getLinkResponse = async (
       "User-Agent": userAgent,
     };
     let options: RequestInit = {};
-    if (proxy == undefined) {
+    let proxyAgent: HttpProxyAgent;
+    if (typeof proxy == "string") {
+      if (proxy == "random") {
+        let randomProxy = getRandomProxyFromTxt()
+        console.log("RANDOM PROXY:"+randomProxy)
+        proxyAgent = new HttpProxyAgent("http://" + randomProxy);
+      } else {
+        proxyAgent = new HttpProxyAgent("http://" + proxy);
+      }
       options = {
         method: "GET",
         headers: myHeaders,
         redirect: "follow",
         follow: 100,
-        agent: new HttpProxyAgent("http://" + "172.67.181.36:80"),
+        agent: proxyAgent,
       };
     } else {
       options = {
@@ -60,9 +75,11 @@ let getLinkResponse = async (
     let response = await fetch(url, options);
     return response;
   } catch (error) {
-    console.log(error);
+    if (log) {
+      console.log(error);
+    }
     return new Response("<html></html>");
   }
 };
 
-export { getLinkCheerio, getLinkRaw, getLinkResponse };
+export { getLinkCheerio, getLinkRaw, getLinkResponse, sleep };

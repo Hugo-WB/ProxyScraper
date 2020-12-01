@@ -3,7 +3,7 @@ import { getLinkCheerio } from "../../Request";
 
 const FreeProxyCzUrl = async (url: string): Promise<string[]> => {
   try {
-    let $ = await getLinkCheerio(url);
+    let $ = await getLinkCheerio(url,"random");
     let rows = $("#proxy_list").children("tbody").children("tr");
     let proxies: string[] = [];
     let Base64Regex = RegExp(/Base64\.decode\(".*?\"\)/);

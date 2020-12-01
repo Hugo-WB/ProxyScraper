@@ -29,44 +29,46 @@ let getGoogleSearchCheerio = async (
       search.replace(reg, "+") +
       "&start=" +
       ((page - 1) * 10).toString(),
-      "217.172.122.4:8080"
+      "random"
+    // "46.4.96.137:8080"
   );
 };
 
 let getProxiesFromGoogleSearch = async (search: string) => {
-  let proxies: string[] = [];
+  let proxies: string[][] = [];
   // Array of promises that contain the array of links on every google page
   // E.g. For 2 pages [[link1,link2],[link1,link2,link3]]
   let googleLinksPromises: Promise<string[]>[] = [];
-  for (let i = 1; i < 3; i++) {
+  for (let i = 1; i < 4; i++) {
     googleLinksPromises.push(getLinksFromGoogleSearch(search, i));
   }
   let googlePagesLinks = await Promise.allSettled(googleLinksPromises);
-  // Array of promises that contain all proxies on a google search page
-  // Eg. for 3 pages [[proxy,proxy],[proxy],[proxy,proxy,proxy]]
+  // Array of promises that contain all proxies E.g. [proxy,proxy,proxy]
   let linkProxiesPromises: Promise<string[]>[] = [];
-  console.log(googlePagesLinks)
+  console.log(googlePagesLinks);
   googlePagesLinks.forEach((googleLinks) => {
     if (googleLinks.status == "fulfilled") {
       googleLinks.value.forEach((link) => {
-        linkProxiesPromises.push(getProxiesFromPastebinLink(link));
+        linkProxiesPromises.push(
+          getProxiesFromPastebinLink(link, undefined, true)
+        );
       });
     }
   });
   let linkProxies = await Promise.allSettled(linkProxiesPromises);
-  console.log(linkProxies)
+  console.log(linkProxies);
   linkProxies.forEach((linkProxy) => {
     if (linkProxy.status == "fulfilled") {
       if (linkProxy.value != null) {
         console.log("INK PROXY");
         console.log(linkProxy.value);
-        proxies.concat(linkProxy.value);
+        proxies.push(linkProxy.value);
       }
     }
   });
   console.log("PROXIES 0");
-  console.log(proxies);
-  return proxies;
+  console.log(proxies.flat());
+  return proxies.flat();
 };
 
 class Google {}
